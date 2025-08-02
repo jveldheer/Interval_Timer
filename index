@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veldheer Lineman Vault Interval Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .setup-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .sets-container {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .set-item {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .set-item input {
+            flex: 1;
+        }
+
+        .remove-set {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .remove-set:hover {
+            background: #ff3742;
+        }
+
+        .add-set, .start-btn, .stop-btn, .reset-btn {
+            background: linear-gradient(45deg, #00d4aa, #01a3a4);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #00d4aa, #01a3a4);
+            font-size: 1.5em;
+            padding: 20px 40px;
+        }
+
+        .stop-btn {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+        }
+
+        .reset-btn {
+            background: linear-gradient(45deg, #ffa502, #ff6348);
+        }
+
+        .add-set:hover, .start-btn:hover, .stop-btn:hover, .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .timer-display {
+            text-align: center;
+            margin: 30px 0;
+            display: none;
+        }
+
+        .timer-display.active {
+            display: block;
+        }
+
+        .current-time {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .timer-status {
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .timer-status.prepare {
+            background: linear-gradient(45deg, #ffa502, #ff6348);
+        }
+
+        .timer-status.work {
+            background: linear-gradient(45deg, #00d4aa, #01a3a4);
+        }
+
+        .work-pulse {
+            animation: redPulse 1s infinite;
+        }
+
+        @keyframes redPulse {
+            0% {
+                background-color: #dc2626;
+                box-shadow: 0 0 20px rgba(220, 38, 38, 0.7);
+            }
+            50% {
+                background-color: #ef4444;
+                box-shadow: 0 0 40px rgba(239, 68, 68, 0.9);
+            }
+            100% {
+                background-color: #dc2626;
+                box-shadow: 0 0 20px rgba(220, 38, 38, 0.7);
+            }
+        }
+
+        .timer-status.rest {
+            background: linear-gradient(45deg, #5352ed, #3742fa);
+        }
+
+        .timer-status.set-break {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+        }
+
+        .progress-info {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .current-time {
+                font-size: 3em;
+            }
+
+            .timer-status {
+                font-size: 1.5em;
+            }
+
+            .set-item {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏈 Veldheer Lineman Vault Timer</h1>
+        
+        <div class="setup-section" id="setupSection">
+            <div class="input-group">
+                <label for="workTime">Work Time (seconds):</label>
+                <input type="number" id="workTime" value="8" min="1" placeholder="Enter work time">
+            </div>
+            
+            <div class="input-group">
+                <label for="restTime">Rest Time (seconds):</label>
+                <input type="number" id="restTime" value="2" min="0" placeholder="Enter rest time">
+            </div>
+            
+            <div class="input-group">
+                <label for="rounds">Rounds per Set:</label>
+                <input type="number" id="rounds" value="8" min="1" placeholder="Enter rounds per set">
+            </div>
+
+            <div class="sets-container">
+                <label>Sets Configuration:</label>
+                <div id="setsContainer">
+                    <div class="set-item">
+                        <label>Set 1:</label>
+                        <input type="number" placeholder="Rest after set (seconds)" value="60" min="0" class="set-rest">
+                    </div>
+                </div>
+                <button class="add-set" onclick="addSet()">+ Add Another Set</button>
+            </div>
+
+            <div class="controls">
+                <button class="start-btn" onclick="startTimer()">🚀 START TIMER</button>
+            </div>
+        </div>
+
+        <div class="timer-display" id="timerDisplay">
+            <div class="current-time" id="currentTime">00:00</div>
+            <div class="timer-status" id="timerStatus">Ready</div>
+            <div class="progress-info" id="progressInfo"></div>
+            
+            <div class="controls">
+                <div class="button-group">
+                    <button class="stop-btn" onclick="stopTimer()">⏹️ STOP</button>
+                    <button class="reset-btn" onclick="resetTimer()">🔄 RESET</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timer = null;
+        let currentTime = 0;
+        let phase = 'prepare'; // prepare, work, rest, set-break, complete
+        let currentSet = 1;
+        let currentRound = 1;
+        let totalSets = 1;
+        let isRunning = false;
+        
+        // Audio context for beeps
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function beep(frequency = 800, duration = 200, volume = 0.3) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration / 1000);
+        }
+
+        function doubleBeep() {
+            beep(1000, 150);
+            setTimeout(() => beep(1000, 150), 200);
+        }
+
+        function tripleBeep() {
+            beep(1200, 200);
+            setTimeout(() => beep(1200, 200), 250);
+            setTimeout(() => beep(1200, 200), 500);
+        }
+
+        function addSet() {
+            totalSets++;
+            const setsContainer = document.getElementById('setsContainer');
+            const newSet = document.createElement('div');
+            newSet.className = 'set-item';
+            newSet.innerHTML = `
+                <label>Set ${totalSets}:</label>
+                <input type="number" placeholder="Rest after set (seconds)" value="60" min="0" class="set-rest">
+                <button class="remove-set" onclick="removeSet(this)">Remove</button>
+            `;
+            setsContainer.appendChild(newSet);
+        }
+
+        function removeSet(button) {
+            if (totalSets > 1) {
+                button.parentElement.remove();
+                totalSets--;
+                updateSetLabels();
+            }
+        }
+
+        function updateSetLabels() {
+            const setItems = document.querySelectorAll('.set-item');
+            setItems.forEach((item, index) => {
+                item.querySelector('label').textContent = `Set ${index + 1}:`;
+            });
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateDisplay() {
+            document.getElementById('currentTime').textContent = formatTime(currentTime);
+            
+            const statusElement = document.getElementById('timerStatus');
+            const progressElement = document.getElementById('progressInfo');
+            
+            statusElement.className = 'timer-status ' + phase;
+            
+            switch(phase) {
+                case 'prepare':
+                    statusElement.textContent = '🏃‍♂️ GET READY!';
+                    progressElement.textContent = 'Preparing for workout...';
+                    document.body.classList.remove('work-pulse');
+                    break;
+                case 'work':
+                    statusElement.textContent = '💪 WORK TIME!';
+                    progressElement.textContent = `Set ${currentSet}/${totalSets} • Round ${currentRound}/${document.getElementById('rounds').value}`;
+                    document.body.classList.add('work-pulse');
+                    break;
+                case 'rest':
+                    statusElement.textContent = '😮‍💨 REST TIME';
+                    progressElement.textContent = `Set ${currentSet}/${totalSets} • Round ${currentRound}/${document.getElementById('rounds').value}`;
+                    document.body.classList.remove('work-pulse');
+                    break;
+                case 'set-break':
+                    statusElement.textContent = '🔄 SET BREAK';
+                    progressElement.textContent = `Completed Set ${currentSet-1}/${totalSets} • Preparing for Set ${currentSet}`;
+                    document.body.classList.remove('work-pulse');
+                    break;
+                case 'complete':
+                    statusElement.textContent = '🎉 WORKOUT COMPLETE!';
+                    progressElement.textContent = 'Great job! All sets completed.';
+                    document.body.classList.remove('work-pulse');
+                    break;
+            }
+        }
+
+        function nextPhase() {
+            const workTime = parseInt(document.getElementById('workTime').value);
+            const restTime = parseInt(document.getElementById('restTime').value);
+            const rounds = parseInt(document.getElementById('rounds').value);
+            const setRests = Array.from(document.querySelectorAll('.set-rest')).map(input => parseInt(input.value));
+
+            switch(phase) {
+                case 'prepare':
+                    phase = 'work';
+                    currentTime = workTime;
+                    beep(1000, 300); // Start work beep
+                    break;
+                    
+                case 'work':
+                    if (currentRound < rounds) {
+                        phase = 'rest';
+                        currentTime = restTime;
+                        currentRound++;
+                        doubleBeep(); // Rest beep
+                    } else if (currentSet < totalSets) {
+                        phase = 'set-break';
+                        currentTime = setRests[currentSet - 1] || 60;
+                        currentSet++;
+                        currentRound = 1;
+                        tripleBeep(); // Set break beep
+                    } else {
+                        phase = 'complete';
+                        currentTime = 0;
+                        stopTimer();
+                        tripleBeep(); // Completion beep
+                        return;
+                    }
+                    break;
+                    
+                case 'rest':
+                    phase = 'work';
+                    currentTime = workTime;
+                    beep(1000, 300); // Work beep
+                    break;
+                    
+                case 'set-break':
+                    phase = 'work';
+                    currentTime = workTime;
+                    beep(1000, 300); // Work beep
+                    break;
+            }
+        }
+
+        function tick() {
+            if (currentTime > 0) {
+                currentTime--;
+                updateDisplay();
+                
+                // Countdown beeps for last 3 seconds
+                if (currentTime <= 3 && currentTime > 0) {
+                    beep(600, 100);
+                }
+            } else {
+                nextPhase();
+                updateDisplay();
+            }
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            
+            // Resume audio context if needed
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            
+            // Initialize timer
+            phase = 'prepare';
+            currentTime = 5; // 5 second countdown
+            currentSet = 1;
+            currentRound = 1;
+            totalSets = document.querySelectorAll('.set-item').length;
+            isRunning = true;
+            
+            // Show timer display, hide setup
+            document.getElementById('setupSection').style.display = 'none';
+            document.getElementById('timerDisplay').classList.add('active');
+            
+            updateDisplay();
+            timer = setInterval(tick, 1000);
+        }
+
+        function stopTimer() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            stopTimer();
+            
+            // Reset all variables
+            phase = 'prepare';
+            currentTime = 0;
+            currentSet = 1;
+            currentRound = 1;
+            
+            // Show setup, hide timer
+            document.getElementById('setupSection').style.display = 'block';
+            document.getElementById('timerDisplay').classList.remove('active');
+        }
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
