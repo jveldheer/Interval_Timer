@@ -110,7 +110,7 @@
             background: #ff3742;
         }
 
-        .add-set, .start-btn, .stop-btn, .reset-btn {
+        .add-set, .start-btn, .stop-btn, .reset-btn, .pause-btn {
             background: linear-gradient(45deg, #00d4aa, #01a3a4);
             color: white;
             border: none;
@@ -133,11 +133,15 @@
             background: linear-gradient(45deg, #ff4757, #ff3742);
         }
 
+        .pause-btn {
+            background: linear-gradient(45deg, #ffa502, #ff6348);
+        }
+
         .reset-btn {
             background: linear-gradient(45deg, #ffa502, #ff6348);
         }
 
-        .add-set:hover, .start-btn:hover, .stop-btn:hover, .reset-btn:hover {
+        .add-set:hover, .start-btn:hover, .stop-btn:hover, .reset-btn:hover, .pause-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
@@ -179,18 +183,37 @@
             animation: redPulse 1s infinite;
         }
 
+        .rest-pulse {
+            animation: greenPulse 1s infinite;
+        }
+
         @keyframes redPulse {
             0% {
-                background-color: #dc2626;
-                box-shadow: 0 0 20px rgba(220, 38, 38, 0.7);
+                background: radial-gradient(circle, #dc2626, #7f1d1d);
+                box-shadow: 0 0 50px rgba(220, 38, 38, 0.8);
             }
             50% {
-                background-color: #ef4444;
-                box-shadow: 0 0 40px rgba(239, 68, 68, 0.9);
+                background: radial-gradient(circle, #ef4444, #991b1b);
+                box-shadow: 0 0 80px rgba(239, 68, 68, 1);
             }
             100% {
-                background-color: #dc2626;
-                box-shadow: 0 0 20px rgba(220, 38, 38, 0.7);
+                background: radial-gradient(circle, #dc2626, #7f1d1d);
+                box-shadow: 0 0 50px rgba(220, 38, 38, 0.8);
+            }
+        }
+
+        @keyframes greenPulse {
+            0% {
+                background: radial-gradient(circle, #16a34a, #15803d);
+                box-shadow: 0 0 50px rgba(22, 163, 74, 0.8);
+            }
+            50% {
+                background: radial-gradient(circle, #22c55e, #166534);
+                box-shadow: 0 0 80px rgba(34, 197, 94, 1);
+            }
+            100% {
+                background: radial-gradient(circle, #16a34a, #15803d);
+                box-shadow: 0 0 50px rgba(22, 163, 74, 0.8);
             }
         }
 
@@ -286,11 +309,16 @@
             
             <div class="controls">
                 <div class="button-group">
+                    <button class="pause-btn" id="pauseBtn" onclick="togglePause()">⏸️ PAUSE</button>
                     <button class="stop-btn" onclick="stopTimer()">⏹️ STOP</button>
                     <button class="reset-btn" onclick="resetTimer()">🔄 RESET</button>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; font-size: 0.9em; color: rgba(255, 255, 255, 0.8);">
+        📱 <strong>Mobile Users:</strong> Make sure your sound is ON and volume is turned UP for audio cues!
     </div>
 
     <script>
@@ -301,6 +329,7 @@
         let currentRound = 1;
         let totalSets = 1;
         let isRunning = false;
+        let isPaused = false;
         
         // Audio context for beeps
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -377,29 +406,31 @@
             
             switch(phase) {
                 case 'prepare':
-                    statusElement.textContent = '🏃‍♂️ GET READY!';
+                    statusElement.textContent = isPaused ? '⏸️ PAUSED - GET READY!' : '🏃‍♂️ GET READY!';
                     progressElement.textContent = 'Preparing for workout...';
-                    document.body.classList.remove('work-pulse');
+                    document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
                     break;
                 case 'work':
-                    statusElement.textContent = '💪 WORK TIME!';
+                    statusElement.textContent = isPaused ? '⏸️ PAUSED - WORK TIME!' : '💪 WORK TIME!';
                     progressElement.textContent = `Set ${currentSet}/${totalSets} • Round ${currentRound}/${document.getElementById('rounds').value}`;
-                    document.body.classList.add('work-pulse');
+                    document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
+                    if (!isPaused) document.body.classList.add('work-pulse');
                     break;
                 case 'rest':
-                    statusElement.textContent = '😮‍💨 REST TIME';
+                    statusElement.textContent = isPaused ? '⏸️ PAUSED - REST TIME' : '😮‍💨 REST TIME';
                     progressElement.textContent = `Set ${currentSet}/${totalSets} • Round ${currentRound}/${document.getElementById('rounds').value}`;
-                    document.body.classList.remove('work-pulse');
+                    document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
+                    if (!isPaused) document.body.classList.add('rest-pulse');
                     break;
                 case 'set-break':
-                    statusElement.textContent = '🔄 SET BREAK';
+                    statusElement.textContent = isPaused ? '⏸️ PAUSED - SET BREAK' : '🔄 SET BREAK';
                     progressElement.textContent = `Completed Set ${currentSet-1}/${totalSets} • Preparing for Set ${currentSet}`;
-                    document.body.classList.remove('work-pulse');
+                    document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
                     break;
                 case 'complete':
                     statusElement.textContent = '🎉 WORKOUT COMPLETE!';
                     progressElement.textContent = 'Great job! All sets completed.';
-                    document.body.classList.remove('work-pulse');
+                    document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
                     break;
             }
         }
@@ -482,6 +513,7 @@
             currentRound = 1;
             totalSets = document.querySelectorAll('.set-item').length;
             isRunning = true;
+            isPaused = false;
             
             // Show timer display, hide setup
             document.getElementById('setupSection').style.display = 'none';
@@ -497,6 +529,32 @@
                 timer = null;
             }
             isRunning = false;
+            isPaused = false;
+            document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
+        }
+
+        function togglePause() {
+            const pauseBtn = document.getElementById('pauseBtn');
+            
+            if (!isRunning) return;
+            
+            if (isPaused) {
+                // Resume
+                isPaused = false;
+                pauseBtn.textContent = '⏸️ PAUSE';
+                timer = setInterval(tick, 1000);
+            } else {
+                // Pause
+                isPaused = true;
+                pauseBtn.textContent = '▶️ RESUME';
+                if (timer) {
+                    clearInterval(timer);
+                    timer = null;
+                }
+                // Remove pulsing when paused
+                document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
+            }
+            updateDisplay();
         }
 
         function resetTimer() {
@@ -507,6 +565,10 @@
             currentTime = 0;
             currentSet = 1;
             currentRound = 1;
+            isPaused = false;
+            
+            // Reset pause button
+            document.getElementById('pauseBtn').textContent = '⏸️ PAUSE';
             
             // Show setup, hide timer
             document.getElementById('setupSection').style.display = 'block';
