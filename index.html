@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Veldheer Lineman Vault Interval Timer</title>
+    <title>Veldheer Lineman Vault Timer</title>
     <style>
         * {
             margin: 0;
@@ -12,31 +12,112 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
+            font-family: 'Arial Black', 'Arial', sans-serif;
+            background: #1a1a1a;
+            color: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Vault pattern background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255, 204, 0, 0.03) 35px, rgba(255, 204, 0, 0.03) 70px),
+                repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(255, 204, 0, 0.02) 35px, rgba(255, 204, 0, 0.02) 70px);
+            pointer-events: none;
+            z-index: 1;
         }
 
         .container {
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            background: #2a2a2a;
+            border: 4px solid #ffcc00;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 
+                0 0 40px rgba(255, 204, 0, 0.3),
+                inset 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .logo-text {
+            font-size: 3em;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: #fff;
+            text-shadow: 
+                3px 3px 0 #000,
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                0 0 20px rgba(255, 204, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .logo-subtitle {
+            font-size: 1.8em;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #ffcc00;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        /* Vault decoration */
+        .vault-icon {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: #3a3a3a;
+            border: 3px solid #ffcc00;
+            border-radius: 10px;
+            position: relative;
+            margin: 0 auto 20px;
+            box-shadow: 
+                inset 0 0 10px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(255, 204, 0, 0.3);
+        }
+
+        .vault-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 25px;
+            height: 25px;
+            border: 3px solid #ffcc00;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffcc00, #ff9900);
         }
 
         h1 {
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 2.2em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ffcc00;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .setup-section {
@@ -44,42 +125,45 @@
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: bold;
             font-size: 1.1em;
+            color: #ffcc00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         input {
             width: 100%;
-            padding: 12px;
-            border: none;
+            padding: 15px;
+            border: 2px solid #ffcc00;
             border-radius: 8px;
             font-size: 1.2em;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            backdrop-filter: blur(5px);
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
+            background: #1a1a1a;
+            color: #fff;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
 
         input:focus {
             outline: none;
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            background: #2a2a2a;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+            transform: scale(1.02);
         }
 
         .sets-container {
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 3px solid #ffcc00;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
+            background: #1a1a1a;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
         }
 
         .set-item {
@@ -88,8 +172,15 @@
             align-items: center;
             margin-bottom: 15px;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
+            background: #2a2a2a;
+            border: 2px solid #444;
             border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .set-item:hover {
+            border-color: #ffcc00;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
         }
 
         .set-item input {
@@ -97,53 +188,78 @@
         }
 
         .remove-set {
-            background: #ff4757;
+            background: #cc0000;
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 10px 15px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
         }
 
         .remove-set:hover {
-            background: #ff3742;
+            background: #ff0000;
+            transform: scale(1.05);
         }
 
         .add-set, .start-btn, .stop-btn, .reset-btn, .pause-btn {
-            background: linear-gradient(45deg, #00d4aa, #01a3a4);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #ffcc00, #ff9900);
+            color: #000;
+            border: 3px solid #000;
+            padding: 15px 30px;
+            border-radius: 10px;
             font-size: 1.1em;
-            font-weight: bold;
+            font-weight: 900;
             cursor: pointer;
             transition: all 0.3s ease;
             margin: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 
+                0 5px 0 #000,
+                0 8px 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            top: 0;
         }
 
         .start-btn {
-            background: linear-gradient(45deg, #00d4aa, #01a3a4);
-            font-size: 1.5em;
-            padding: 20px 40px;
+            background: linear-gradient(135deg, #ffcc00, #ff9900);
+            font-size: 1.6em;
+            padding: 25px 50px;
+            border-width: 4px;
+            box-shadow: 
+                0 8px 0 #000,
+                0 12px 20px rgba(0, 0, 0, 0.5);
         }
 
         .stop-btn {
-            background: linear-gradient(45deg, #ff4757, #ff3742);
+            background: linear-gradient(135deg, #cc0000, #990000);
+            color: #fff;
         }
 
         .pause-btn {
-            background: linear-gradient(45deg, #ffa502, #ff6348);
+            background: linear-gradient(135deg, #ff9900, #ff6600);
         }
 
         .reset-btn {
-            background: linear-gradient(45deg, #ffa502, #ff6348);
+            background: linear-gradient(135deg, #666, #444);
+            color: #fff;
         }
 
         .add-set:hover, .start-btn:hover, .stop-btn:hover, .reset-btn:hover, .pause-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            top: 3px;
+            box-shadow: 
+                0 2px 0 #000,
+                0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .add-set:active, .start-btn:active, .stop-btn:active, .reset-btn:active, .pause-btn:active {
+            top: 5px;
+            box-shadow: 
+                0 1px 0 #000,
+                0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
         .timer-display {
@@ -157,77 +273,82 @@
         }
 
         .current-time {
-            font-size: 4em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 5em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: #ffcc00;
+            text-shadow: 
+                4px 4px 0 #000,
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                0 0 30px rgba(255, 204, 0, 0.5);
+            letter-spacing: 5px;
         }
 
         .timer-status {
-            font-size: 2em;
+            font-size: 2.2em;
             margin-bottom: 20px;
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
-            font-weight: bold;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 3px solid #000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
 
         .timer-status.prepare {
-            background: linear-gradient(45deg, #ffa502, #ff6348);
+            background: linear-gradient(135deg, #666, #444);
+            color: #ffcc00;
         }
 
         .timer-status.work {
-            background: linear-gradient(45deg, #00d4aa, #01a3a4);
-        }
-
-        .work-pulse {
-            animation: redPulse 1s infinite;
-        }
-
-        .rest-pulse {
-            animation: greenPulse 1s infinite;
-        }
-
-        @keyframes redPulse {
-            0% {
-                background: radial-gradient(circle, #dc2626, #7f1d1d);
-                box-shadow: 0 0 50px rgba(220, 38, 38, 0.8);
-            }
-            50% {
-                background: radial-gradient(circle, #ef4444, #991b1b);
-                box-shadow: 0 0 80px rgba(239, 68, 68, 1);
-            }
-            100% {
-                background: radial-gradient(circle, #dc2626, #7f1d1d);
-                box-shadow: 0 0 50px rgba(220, 38, 38, 0.8);
-            }
-        }
-
-        @keyframes greenPulse {
-            0% {
-                background: radial-gradient(circle, #16a34a, #15803d);
-                box-shadow: 0 0 50px rgba(22, 163, 74, 0.8);
-            }
-            50% {
-                background: radial-gradient(circle, #22c55e, #166534);
-                box-shadow: 0 0 80px rgba(34, 197, 94, 1);
-            }
-            100% {
-                background: radial-gradient(circle, #16a34a, #15803d);
-                box-shadow: 0 0 50px rgba(22, 163, 74, 0.8);
-            }
+            background: linear-gradient(135deg, #cc0000, #990000);
+            color: #fff;
+            animation: workFlash 1s infinite;
         }
 
         .timer-status.rest {
-            background: linear-gradient(45deg, #5352ed, #3742fa);
+            background: linear-gradient(135deg, #00cc00, #009900);
+            color: #fff;
+            animation: restFlash 1s infinite;
         }
 
         .timer-status.set-break {
-            background: linear-gradient(45deg, #ff4757, #ff3742);
+            background: linear-gradient(135deg, #0099cc, #006699);
+            color: #fff;
+        }
+
+        @keyframes workFlash {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(255, 0, 0, 1);
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes restFlash {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(0, 255, 0, 1);
+                transform: scale(1.02);
+            }
         }
 
         .progress-info {
-            font-size: 1.3em;
+            font-size: 1.4em;
             margin-bottom: 20px;
+            color: #ffcc00;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .controls {
@@ -242,63 +363,99 @@
             flex-wrap: wrap;
         }
 
+        .mobile-note {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #2a2a2a;
+            border: 2px solid #ffcc00;
+            border-radius: 10px;
+            font-size: 1em;
+            color: #ffcc00;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .mobile-note strong {
+            color: #fff;
+            font-size: 1.1em;
+        }
+
         @media (max-width: 600px) {
             .container {
-                padding: 20px;
+                padding: 25px;
+            }
+
+            .logo-text {
+                font-size: 2.2em;
+            }
+
+            .logo-subtitle {
+                font-size: 1.4em;
             }
 
             h1 {
-                font-size: 2em;
+                font-size: 1.8em;
             }
 
             .current-time {
-                font-size: 3em;
+                font-size: 3.5em;
             }
 
             .timer-status {
-                font-size: 1.5em;
+                font-size: 1.6em;
             }
 
             .set-item {
                 flex-direction: column;
                 gap: 10px;
             }
+
+            .start-btn {
+                font-size: 1.3em;
+                padding: 20px 40px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🏈 Veldheer Lineman Vault Timer</h1>
+        <div class="logo-section">
+            <div class="vault-icon"></div>
+            <div class="logo-text">VELDHEER</div>
+            <div class="logo-subtitle">LINEMAN VAULT</div>
+        </div>
+        
+        <h1>⚡ INTERVAL TIMER ⚡</h1>
         
         <div class="setup-section" id="setupSection">
             <div class="input-group">
-                <label for="workTime">Work Time (seconds):</label>
+                <label for="workTime">💪 Work Time (seconds):</label>
                 <input type="number" id="workTime" value="8" min="1" placeholder="Enter work time">
             </div>
             
             <div class="input-group">
-                <label for="restTime">Rest Time (seconds):</label>
+                <label for="restTime">⏸️ Rest Time (seconds):</label>
                 <input type="number" id="restTime" value="2" min="0" placeholder="Enter rest time">
             </div>
             
             <div class="input-group">
-                <label for="rounds">Rounds per Set:</label>
+                <label for="rounds">🔄 Rounds per Set:</label>
                 <input type="number" id="rounds" value="8" min="1" placeholder="Enter rounds per set">
             </div>
 
             <div class="sets-container">
-                <label>Sets Configuration:</label>
+                <label>📊 Sets Configuration:</label>
                 <div id="setsContainer">
                     <div class="set-item">
                         <label>Set 1:</label>
                         <input type="number" placeholder="Rest after set (seconds)" value="60" min="0" class="set-rest">
                     </div>
                 </div>
-                <button class="add-set" onclick="addSet()">+ Add Another Set</button>
+                <button class="add-set" onclick="addSet()">+ Add Set</button>
             </div>
 
             <div class="controls">
-                <button class="start-btn" onclick="startTimer()">🚀 START TIMER</button>
+                <button class="start-btn" onclick="startTimer()">🚀 START VAULT TIMER</button>
             </div>
         </div>
 
@@ -317,8 +474,8 @@
         </div>
     </div>
 
-    <div style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; font-size: 0.9em; color: rgba(255, 255, 255, 0.8);">
-        📱 <strong>Mobile Users:</strong> Make sure your sound is ON and volume is turned UP for audio cues!
+    <div class="mobile-note">
+        🔊 <strong>MOBILE USERS:</strong> Ensure sound is ON and volume is UP for audio alerts!
     </div>
 
     <script>
@@ -406,31 +563,24 @@
             
             switch(phase) {
                 case 'prepare':
-                    statusElement.textContent = isPaused ? '⏸️ PAUSED - GET READY!' : '🏃‍♂️ GET READY!';
+                    statusElement.textContent = isPaused ? '⏸️ PAUSED - GET READY!' : '🏋️ GET READY!';
                     progressElement.textContent = 'Preparing for workout...';
-                    document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
                     break;
                 case 'work':
-                    statusElement.textContent = isPaused ? '⏸️ PAUSED - WORK TIME!' : '💪 WORK TIME!';
+                    statusElement.textContent = isPaused ? '⏸️ PAUSED - WORK!' : '💪 WORK TIME!';
                     progressElement.textContent = `Set ${currentSet}/${totalSets} • Round ${currentRound}/${document.getElementById('rounds').value}`;
-                    document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
-                    if (!isPaused) document.body.classList.add('work-pulse');
                     break;
                 case 'rest':
-                    statusElement.textContent = isPaused ? '⏸️ PAUSED - REST TIME' : '😮‍💨 REST TIME';
+                    statusElement.textContent = isPaused ? '⏸️ PAUSED - REST' : '😮‍💨 REST TIME';
                     progressElement.textContent = `Set ${currentSet}/${totalSets} • Round ${currentRound}/${document.getElementById('rounds').value}`;
-                    document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
-                    if (!isPaused) document.body.classList.add('rest-pulse');
                     break;
                 case 'set-break':
-                    statusElement.textContent = isPaused ? '⏸️ PAUSED - SET BREAK' : '🔄 SET BREAK';
-                    progressElement.textContent = `Completed Set ${currentSet-1}/${totalSets} • Preparing for Set ${currentSet}`;
-                    document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
+                    statusElement.textContent = isPaused ? '⏸️ PAUSED - BREAK' : '🔄 SET BREAK';
+                    progressElement.textContent = `Completed Set ${currentSet-1}/${totalSets} • Next: Set ${currentSet}`;
                     break;
                 case 'complete':
-                    statusElement.textContent = '🎉 WORKOUT COMPLETE!';
-                    progressElement.textContent = 'Great job! All sets completed.';
-                    document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
+                    statusElement.textContent = '🏆 VAULT COMPLETE!';
+                    progressElement.textContent = 'Outstanding work, Lineman!';
                     break;
             }
         }
@@ -530,7 +680,6 @@
             }
             isRunning = false;
             isPaused = false;
-            document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
         }
 
         function togglePause() {
@@ -551,8 +700,6 @@
                     clearInterval(timer);
                     timer = null;
                 }
-                // Remove pulsing when paused
-                document.body.className = document.body.className.replace(/\b(work-pulse|rest-pulse)\b/g, '');
             }
             updateDisplay();
         }
